@@ -64,7 +64,7 @@ export default function Index() {
   const renderRestaurant = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={() => router.push(`/restaurant/${item.id}`)} // Navigate to the restaurant detail screen
+      onPress={() => router.push(`/${item.id}`)} // Navigate to the restaurant detail screen
     >
       <RestaurantCard restaurant={item} />
     </TouchableOpacity>
@@ -76,7 +76,7 @@ export default function Index() {
         <Text>Loading...</Text>
       ) : (
         <>
-          {/* Render Filter List */}
+          {/* Render Filter List, change flatMap to FlatList? */}
           <FilterList
             filters={restaurants.flatMap((r) => r.filterIds)} // Extract filters from restaurants
             selectedFilters={selectedFilters}

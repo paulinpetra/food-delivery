@@ -51,6 +51,13 @@ export default function RootLayout() {
           },
         }}
       />
+      <Stack.Screen
+        name="[restaurantId]"
+        options={{
+          headerShown: true,
+          headerTitle: "Restaurant Details",
+        }}
+      />
     </Stack>
   );
 }

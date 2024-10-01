@@ -2,11 +2,10 @@
 
 import axios from "axios";
 
-//base URL for the API
+// Base URL for the API
 const API_BASE_URL = "https://food-delivery.umain.io/api/v1";
 
-//function to fetch all restaurants
-
+// Function to fetch all restaurants
 export const getRestaurants = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/restaurants`);
@@ -16,8 +15,7 @@ export const getRestaurants = async () => {
   }
 };
 
-//function to fetch filtered restaurants by ID
-
+// Function to fetch filtered restaurants by ID
 export const getFilter = async (filterId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/filter/${filterId}`);
@@ -27,16 +25,17 @@ export const getFilter = async (filterId) => {
   }
 };
 
-//Function to fetch the open status of a restaurant
+// Function to fetch the open status of a restaurant
+// Function to fetch the open status of a restaurant
 export const getOpenStatus = async (restaurantId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/open/${restaurantId}`);
     return response.data;
   } catch (error) {
     console.error(
-      `Error fetching open status for restaurant ${restaurantId}:`,
+      `Error fetching open status for restaurant ${restaurantId}`,
       error
     );
-    throw error;
+    throw error; // Ensure the error is thrown to be caught by the caller
   }
 };

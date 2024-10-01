@@ -1,11 +1,10 @@
-//eaxmple component, does not match the route
-import { useRouter, useSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { getOpenStatus } from "../services/api"; // Function to fetch restaurant status
 
 export default function RestaurantDetailScreen() {
-  const { restaurantId } = useSearchParams(); // Get the dynamic restaurantId from the URL
+  const { restaurantId } = useLocalSearchParams(); // Get the dynamic restaurantId from the URL
   const [restaurantStatus, setRestaurantStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
