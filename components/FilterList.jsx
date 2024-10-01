@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   filterText: {
     color: Colors.darkText,
     paddingLeft: 8, // Space between image and text
-    fontSize: 14, // Font size
+    fontSize: 14,
     lineHeight: 20,
     fontFamily: "Poppins-Regular",
   },

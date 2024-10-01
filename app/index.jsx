@@ -1,21 +1,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import {
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getRestaurants, getFilter } from "../services/api"; // Importing getFilter
+import { getRestaurants } from "../services/api";
 import RestaurantCard from "../components/RestaurantCard";
 import FilterList from "../components/FilterList"; // Importing FilterList component
 import { Colors } from "../constants/Colors";
 
 export default function Index() {
   const router = useRouter();
-
+  //local state management for now - maybe change later
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // State for filtered restaurants
   const [selectedFilters, setSelectedFilters] = useState([]); // Keep track of selected filters
@@ -53,6 +47,8 @@ export default function Index() {
       setFilteredRestaurants(restaurants);
     } else {
       // Fetch filtered restaurants by filter ID
+      //check if any of the filter IDs associated with the current restaurant match the criteria defined inside the callback function.
+      // check if the current id (from the filterIds array) exists within the updatedFilters array.
       const filteredResults = restaurants.filter((restaurant) =>
         restaurant.filterIds.some((id) => updatedFilters.includes(id))
       );
@@ -64,7 +60,12 @@ export default function Index() {
   const renderRestaurant = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={() => router.push(`/${item.id}`)} // Navigate to the restaurant detail screen
+      onPress={() =>
+        router.push({
+          pathname: `/${item.id}`,
+          params: { image_url: item.image_url, name: item.name },
+        })
+      }
     >
       <RestaurantCard restaurant={item} />
     </TouchableOpacity>
