@@ -2,6 +2,7 @@ import { Stack, SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { Image } from "react-native";
+import { Colors } from "../constants/Colors";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -45,6 +46,9 @@ export default function RootLayout() {
             />
           ),
           headerTitle: "", // Hiding the default title to only show the logo
+          headerStyle: {
+            backgroundColor: Colors.background,
+          },
         }}
       />
     </Stack>

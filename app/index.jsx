@@ -1,26 +1,33 @@
-//Home screen with restaurant list and filtered list
-
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-
-import { Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getRestaurants } from "../services/api";
+import { getRestaurants, getFilter } from "../services/api"; // Importing getFilter
 import RestaurantCard from "../components/RestaurantCard";
+import FilterList from "../components/FilterList"; // Importing FilterList component
+import { Colors } from "../constants/Colors";
 
 export default function Index() {
   const router = useRouter();
 
-  // Local state management for now
   const [restaurants, setRestaurants] = useState([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // State for filtered restaurants
+  const [selectedFilters, setSelectedFilters] = useState([]); // Keep track of selected filters
   const [loading, setLoading] = useState(true);
 
-  // Fetch restaurants when the component mounts
+  // Fetch all restaurants when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchedRestaurants = await getRestaurants();
         setRestaurants(fetchedRestaurants);
+        setFilteredRestaurants(fetchedRestaurants); // By default, show all restaurants
       } catch (error) {
         console.error("Error fetching restaurants:", error);
       } finally {
@@ -29,6 +36,29 @@ export default function Index() {
     };
     fetchData();
   }, []);
+
+  // Function to toggle filters
+  const toggleFilter = async (filterId) => {
+    let updatedFilters = [...selectedFilters];
+    if (updatedFilters.includes(filterId)) {
+      updatedFilters = updatedFilters.filter((id) => id !== filterId); // Remove filter if already selected
+    } else {
+      updatedFilters.push(filterId); // Add filter if not selected
+    }
+    setSelectedFilters(updatedFilters);
+
+    // Fetch and apply filtered restaurants based on selected filters
+    if (updatedFilters.length === 0) {
+      // If no filters are selected, show all restaurants
+      setFilteredRestaurants(restaurants);
+    } else {
+      // Fetch filtered restaurants by filter ID
+      const filteredResults = restaurants.filter((restaurant) =>
+        restaurant.filterIds.some((id) => updatedFilters.includes(id))
+      );
+      setFilteredRestaurants(filteredResults);
+    }
+  };
 
   // Render each restaurant item
   const renderRestaurant = ({ item }) => (
@@ -45,13 +75,23 @@ export default function Index() {
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        <FlatList
-          data={restaurants} // Display fetched restaurants
-          keyExtractor={(item) => item.id}
-          renderItem={renderRestaurant} //the object from the data array is passed automatically
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<Text>No restaurants available.</Text>}
-        />
+        <>
+          {/* Render Filter List */}
+          <FilterList
+            filters={restaurants.flatMap((r) => r.filterIds)} // Extract filters from restaurants
+            selectedFilters={selectedFilters}
+            toggleFilter={toggleFilter} // Pass the toggle function
+          />
+
+          {/* Render Restaurant List */}
+          <FlatList
+            data={filteredRestaurants} // Display filtered restaurants or all by default
+            keyExtractor={(item) => item.id}
+            renderItem={renderRestaurant} // The object from the data array is passed automatically
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<Text>No restaurants available.</Text>}
+          />
+        </>
       )}
     </SafeAreaView>
   );
@@ -62,6 +102,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
   },
 });

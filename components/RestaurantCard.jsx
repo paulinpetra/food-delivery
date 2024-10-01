@@ -9,6 +9,7 @@ export default function RestaurantCard({ restaurant }) {
         <View style={styles.infoContainer}>
           <View style={styles.infoLeft}>
             <Text style={styles.name}>{restaurant.name}</Text>
+
             <Text style={styles.details}>
               {" "}
               <Image
