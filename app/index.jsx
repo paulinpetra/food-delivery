@@ -63,7 +63,11 @@ export default function Index() {
       onPress={() =>
         router.push({
           pathname: `/${item.id}`,
-          params: { image_url: item.image_url, name: item.name },
+          params: {
+            image_url: item.image_url,
+            name: item.name,
+            filterIds: Array.isArray(item.filterIds) ? item.filterIds : [], // Ensure filterIds are always an array
+          },
         })
       }
     >

@@ -7,28 +7,53 @@ import {
   ImageBackground,
   SafeAreaView,
 } from "react-native";
-import { getOpenStatus } from "../services/api"; // Function to fetch restaurant status
+import { getOpenStatus, getFilter } from "../services/api"; // Function to fetch restaurant status & filter tags
 import { Colors } from "../constants/Colors";
 
 export default function RestaurantDetailScreen() {
-  const { restaurantId, image_url, name } = useLocalSearchParams(); // Get the dynamic restaurantId from the URL + other details you need
+  const { restaurantId, image_url, name, filterIds } = useLocalSearchParams(); // Get the dynamic restaurantId from the URL + other details I need
+
   const [restaurantStatus, setRestaurantStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [filterNames, setFilterNames] = useState([]); // State for filter names
 
+  //fetching the restaurants status and filter tags
   useEffect(() => {
-    const fetchStatus = async () => {
+    const fetchDetails = async () => {
       try {
-        const status = await getOpenStatus(restaurantId); // Fetch open/close status using the restaurant ID from URL
+        // Fetch open/close status
+        const status = await getOpenStatus(restaurantId);
         setRestaurantStatus(status);
+
+        // Convert filterIds from string to an array since the parameters from useLocalSearchParams() are passed as strings
+        const filterIdsArray = filterIds
+          ? filterIds.split(",").map((id) => id.trim())
+          : []; // Split and trim whitespace
+
+        // Fetch filter names
+        const names = [];
+        for (const filterId of filterIdsArray) {
+          if (filterId) {
+            // Ensure filterId is not empty
+            console.log(`Fetching filter for ID: ${filterId}`); // Log filter ID
+            const filter = await getFilter(filterId); // Fetch each filter by ID
+            if (filter) {
+              names.push(filter.name); // Add the filter name to the list
+            } else {
+              console.warn(`Filter not found for ID: ${filterId}`); // Handle missing filter
+            }
+          }
+        }
+        setFilterNames(names); // Set the filter names in state
       } catch (error) {
-        console.error("Error fetching restaurant status:", error);
+        console.error("Error fetching details:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStatus();
-  }, [restaurantId]);
+    fetchDetails();
+  }, [restaurantId, filterIds]);
 
   return (
     <ImageBackground
@@ -44,6 +69,13 @@ export default function RestaurantDetailScreen() {
             <View style={styles.content}>
               {/* Restaurant Name */}
               <Text style={styles.title}>{name}</Text>
+              {/* Display Filter Tags */}
+              <Text style={styles.filters}>
+                {filterNames.length > 0
+                  ? filterNames.join(", ")
+                  : "No filters available"}
+              </Text>
+
               {/* Open/Closed Status */}
               <Text style={styles.status}>
                 {restaurantStatus?.is_currently_open ? "Open" : "Closed"}
@@ -90,6 +122,12 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 18,
     color: Colors.positive, //make dynamic later
+    marginTop: 8,
+    fontFamily: "Helvetica",
+  },
+  filters: {
+    fontSize: 14,
+    color: Colors.darkText,
     marginTop: 8,
     fontFamily: "Helvetica",
   },
