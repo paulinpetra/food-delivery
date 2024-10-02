@@ -46,6 +46,7 @@ export default function RootLayout() {
             />
           ),
           headerTitle: "", // Hiding the default title to only show the logo
+          headerShadowVisible: false,
           headerStyle: {
             backgroundColor: Colors.background,
           },
@@ -54,8 +55,7 @@ export default function RootLayout() {
       <Stack.Screen
         name="[restaurantId]"
         options={{
-          headerShown: true,
-          headerTitle: "Restaurant Details",
+          headerShown: false,
         }}
       />
     </Stack>

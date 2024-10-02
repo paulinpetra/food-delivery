@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getRestaurants } from "../services/api";
 import RestaurantCard from "../components/RestaurantCard";
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    //justifyContent: "center",
     backgroundColor: Colors.background,
   },
 });

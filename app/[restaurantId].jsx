@@ -6,12 +6,16 @@ import {
   StyleSheet,
   ImageBackground,
   SafeAreaView,
+  TouchableOpacity,
+  Image,
 } from "react-native";
 import { getOpenStatus, getFilter } from "../services/api"; // Function to fetch restaurant status & filter tags
 import { Colors } from "../constants/Colors";
+import { useRouter } from "expo-router";
 
 export default function RestaurantDetailScreen() {
   const { restaurantId, image_url, name, filterIds } = useLocalSearchParams(); // Get the dynamic restaurantId from the URL + other details I need
+  const router = useRouter(); // Initialize router
 
   const [restaurantStatus, setRestaurantStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +59,11 @@ export default function RestaurantDetailScreen() {
     fetchDetails();
   }, [restaurantId, filterIds]);
 
+  // Back button handler
+  const handleBackPress = () => {
+    router.back(); // Navigate back to the previous screen
+  };
+
   return (
     <ImageBackground
       source={{ uri: image_url }}
@@ -62,6 +71,14 @@ export default function RestaurantDetailScreen() {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+          <Image
+            source={require("../assets/images/chevron.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+
         {loading ? (
           <Text>Loading...</Text>
         ) : (
@@ -130,5 +147,15 @@ const styles = StyleSheet.create({
     color: Colors.darkText,
     marginTop: 8,
     fontFamily: "Helvetica",
+  },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 20,
+    zIndex: 1,
+  },
+  backIcon: {
+    width: 24,
+    height: 24,
   },
 });
