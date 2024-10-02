@@ -1,7 +1,27 @@
+import { useEffect, useState } from "react";
+
 import { View, Text, Image, StyleSheet, Platform } from "react-native";
 import { Colors } from "../constants/Colors";
+import { getFilter } from "../services/api";
 
 export default function RestaurantCard({ restaurant }) {
+  const [filterNames, setFilterNames] = useState([]); // State to store filter names from the api filter endpoint
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      const names = []; //array to store the filter names
+      for (const filterId of restaurant.filterIds) {
+        const filter = await getFilter(filterId); // call getFilter with the restaurants filter id
+        if (filter) {
+          names.push(filter.name); // Store the filter name
+        }
+      }
+      setFilterNames(names); // Update state with fetched filter names
+    };
+
+    fetchFilters(); // Call fetch on component mount
+  }, [restaurant.filterIds]); // Run this effect when the filterIds change, for example when the list is refreshed
+
   return (
     <View style={styles.elevatedCard}>
       <View style={styles.card}>
@@ -10,30 +30,38 @@ export default function RestaurantCard({ restaurant }) {
           <View style={styles.infoLeft}>
             <Text style={styles.name}>{restaurant.name}</Text>
 
-            <Text style={styles.details}>
-              {" "}
+            {/* Display Filter Names */}
+            <Text style={styles.filters}>
+              {filterNames.join(", ")} {/* Join filter names with commas */}
+            </Text>
+
+            <View style={styles.details}>
               <Image
                 source={require("../assets/images/clock-icon.png")}
                 style={{
                   width: 12,
                   height: 12,
+                  marginRight: 4,
                 }}
                 resizeMode="contain"
               />
-              {restaurant.delivery_time_minutes} mins
-            </Text>
+              <Text style={styles.detailsText}>
+                {restaurant.delivery_time_minutes} mins
+              </Text>
+            </View>
           </View>
-          <Text style={styles.rating}>
+          <View style={styles.rating}>
             <Image
               source={require("../assets/images/star-icon.png")}
               style={{
                 width: 12,
                 height: 12,
+                marginRight: 4,
               }}
               resizeMode="contain"
-            />{" "}
-            {restaurant.rating}
-          </Text>
+            />
+            <Text style={styles.ratingText}>{restaurant.rating}</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -87,12 +115,32 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
     color: Colors.darkText,
   },
+  filters: {
+    color: Colors.subtitle,
+    paddingVertical: 2,
+    fontFamily: "Helvetica",
+    fontSize: 12,
+    fontWeight: "bold",
+    lineHeight: 16,
+  },
+
   details: {
-    color: "#50555C",
-    marginTop: 4,
-    paddingLeft: 4,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  detailsText: {
     fontFamily: "Inter_18pt-Regular",
+    color: "#50555C",
     fontSize: 10,
     lineHeight: 12,
+  },
+  rating: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  ratingText: {
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: "bold",
   },
 });

@@ -79,7 +79,7 @@ export default function Index() {
         <>
           {/* Render Filter List, change flatMap to FlatList? */}
           <FilterList
-            filters={restaurants.flatMap((r) => r.filterIds)} // Extract filters from restaurants
+            filters={restaurants.flatMap((r) => r.filterIds)} // Extract filter ids from restaurants
             selectedFilters={selectedFilters}
             toggleFilter={toggleFilter} // Pass the toggle function
           />
