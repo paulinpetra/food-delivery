@@ -32,7 +32,8 @@ export default function RestaurantCard({ restaurant }) {
 
             {/* Display Filter Names */}
             <Text style={styles.filters}>
-              {filterNames.join(", ")} {/* Join filter names with commas */}
+              {filterNames.join(" • ")}{" "}
+              {/* Join filter names with bullet point */}
             </Text>
 
             <View style={styles.details}>

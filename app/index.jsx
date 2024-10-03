@@ -6,18 +6,19 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { getRestaurants } from "../services/api";
 import RestaurantCard from "../components/RestaurantCard";
-import FilterList from "../components/FilterList"; // Importing FilterList component
+import FilterList from "../components/FilterList";
 import { Colors } from "../constants/Colors";
+import { StatusBar } from "expo-status-bar";
 
 export default function Index() {
   const router = useRouter();
   //local state management for now - maybe change later
-  const [restaurants, setRestaurants] = useState([]);
-  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // State for filtered restaurants
+  const [restaurants, setRestaurants] = useState([]); //State for restaurant list
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // State for filtered restaurants list
   const [selectedFilters, setSelectedFilters] = useState([]); // Keep track of selected filters
   const [loading, setLoading] = useState(true);
 
@@ -83,27 +84,30 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <>
-          {/* Render Filter List, change flatMap to FlatList? */}
-          <FilterList
-            filters={restaurants.flatMap((r) => r.filterIds)} // Extract filter ids from restaurants
-            selectedFilters={selectedFilters}
-            toggleFilter={toggleFilter} // Pass the toggle function
-          />
+      <StatusBar backgroundColor="Colors.background" />
+      <View style={styles.innerContainer}>
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : (
+          <>
+            {/* Render Filter List */}
+            <FilterList
+              filters={restaurants.flatMap((r) => r.filterIds)} // Extract filter ids from restaurants
+              selectedFilters={selectedFilters}
+              toggleFilter={toggleFilter} // Pass the toggle function
+            />
 
-          {/* Render Restaurant List */}
-          <FlatList
-            data={filteredRestaurants} // Display filtered restaurants or all by default
-            keyExtractor={(item) => item.id}
-            renderItem={renderRestaurant} // The object from the data array is passed automatically
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={<Text>No restaurants available.</Text>}
-          />
-        </>
-      )}
+            {/* Render Restaurant List */}
+            <FlatList
+              data={filteredRestaurants} // Display filtered restaurants or all by default
+              keyExtractor={(item) => item.id}
+              renderItem={renderRestaurant} // The object from the data array is passed automatically
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={<Text>No restaurants available.</Text>}
+            />
+          </>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -112,7 +116,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //justifyContent: "center",
     backgroundColor: Colors.background,
+    marginTop: "8%",
+  },
+  innerContainer: {
+    width: "90%",
   },
 });

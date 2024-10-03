@@ -1,3 +1,5 @@
+import { StatusBar } from "expo-status-bar";
+
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -8,6 +10,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  Platform,
 } from "react-native";
 import { getOpenStatus, getFilter } from "../services/api"; // Function to fetch restaurant status & filter tags
 import { Colors } from "../constants/Colors";
@@ -39,7 +42,6 @@ export default function RestaurantDetailScreen() {
         for (const filterId of filterIdsArray) {
           if (filterId) {
             // Ensure filterId is not empty
-            console.log(`Fetching filter for ID: ${filterId}`); // Log filter ID
             const filter = await getFilter(filterId); // Fetch each filter by ID
             if (filter) {
               names.push(filter.name); // Add the filter name to the list
@@ -71,6 +73,8 @@ export default function RestaurantDetailScreen() {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
+        <StatusBar hidden />
+
         {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
           <Image
@@ -82,21 +86,23 @@ export default function RestaurantDetailScreen() {
         {loading ? (
           <Text>Loading...</Text>
         ) : (
-          <View style={styles.card}>
-            <View style={styles.content}>
-              {/* Restaurant Name */}
-              <Text style={styles.title}>{name}</Text>
-              {/* Display Filter Tags */}
-              <Text style={styles.filters}>
-                {filterNames.length > 0
-                  ? filterNames.join(", ")
-                  : "No filters available"}
-              </Text>
+          <View style={styles.elevatedCard}>
+            <View style={styles.card}>
+              <View style={styles.content}>
+                {/* Restaurant Name */}
+                <Text style={styles.title}>{name}</Text>
+                {/* Display Filter Tags */}
+                <Text style={styles.filters}>
+                  {filterNames.length > 0
+                    ? filterNames.join(" • ")
+                    : "No filters available"}
+                </Text>
 
-              {/* Open/Closed Status */}
-              <Text style={styles.status}>
-                {restaurantStatus?.is_currently_open ? "Open" : "Closed"}
-              </Text>
+                {/* Open/Closed Status */}
+                <Text style={styles.status}>
+                  {restaurantStatus?.is_currently_open ? "Open" : "Closed"}
+                </Text>
+              </View>
             </View>
           </View>
         )}
@@ -109,43 +115,61 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
   },
   backgroundImage: {
-    flex: 1,
-    justifyContent: "center",
-    width: 375,
+    width: "100%",
     height: 220,
   },
+  elevatedCard: {
+    width: "90%",
+    position: "relative", // Necessary for absolute positioning of the card
+    alignItems: "center",
+    marginTop: -72, // Adjust this to overlap the card slightly over the background image (you can tweak this value)
+    borderRadius: 12,
+
+    backgroundColor: "#ffffff",
+    //shadow for iOS
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4, // Shadow for Android
+      },
+    }),
+  },
   card: {
-    width: 343,
-    height: 144,
-    paddingTop: 16,
+    width: "100%", // Full width relative to its parent
     borderRadius: 12,
     overflow: "hidden",
-    position: "relative",
+    position: "absolute",
+    top: 175,
+    zIndex: 1,
   },
 
   content: {
     padding: 16,
-    backgroundColor: "#FFFFFF", // Slight overlay for contrast
-    borderRadius: 12, // Only apply this to the content to match the card shape
+    backgroundColor: "#FFFFFF",
   },
   title: {
     fontSize: 24,
     color: Colors.darkText,
     fontFamily: "Helvetica",
+    paddingTop: 8,
   },
   status: {
     fontSize: 18,
     color: Colors.positive, //make dynamic later
-    marginTop: 8,
     fontFamily: "Helvetica",
+    paddingBottom: 8,
   },
   filters: {
-    fontSize: 14,
-    color: Colors.darkText,
-    marginTop: 8,
+    fontSize: 16,
+    color: Colors.subtitle,
+    paddingVertical: 16,
     fontFamily: "Helvetica",
   },
   backButton: {

@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
   //container for the entire filter list
   filterContainer: {
     flexDirection: "row",
-    justifyContent: "space-between", // Space buttons evenly
-    alignItems: "center", // Center items vertically
-    paddingHorizontal: 10, // Padding inside the container
-    paddingVertical: 5, // Padding inside the container
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   filterButton: {
     backgroundColor: "#FFFFFF",

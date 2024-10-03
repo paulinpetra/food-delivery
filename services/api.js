@@ -26,7 +26,6 @@ export const getFilter = async (filterId) => {
 };
 
 // Function to fetch the open status of a restaurant
-// Function to fetch the open status of a restaurant
 export const getOpenStatus = async (restaurantId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/open/${restaurantId}`);
@@ -36,6 +35,6 @@ export const getOpenStatus = async (restaurantId) => {
       `Error fetching open status for restaurant ${restaurantId}`,
       error
     );
-    throw error; // Ensure the error is thrown to be caught by the caller
+    throw error;
   }
 };
