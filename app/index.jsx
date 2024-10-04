@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: Colors.background,
-    marginTop: "8%",
+    //marginTop: "8%",
   },
   innerContainer: {
     width: "90%",
